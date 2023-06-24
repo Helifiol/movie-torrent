@@ -6,12 +6,13 @@ import sys
 from bs4 import BeautifulSoup
 import re
 
-print("Use only for TV Shows")
+
 
 def get_episode_link():
+    FLAG = 0
     global pattern
     global a
-    name = input("Enter TV Show Name: ")
+    name = input("Enter TV Show/Movie Name: ")
     n_name = name.replace(' ', '+')
     s_url = f'https://ytstv.me/?s={n_name}'
     res = requests.get(s_url)
@@ -41,16 +42,23 @@ def get_episode_link():
     for link in soup.find_all('a'):
         match = re.search(pattern, str(link), flags=re.IGNORECASE)
         if match:
-            print(link.get('href'))
+            # print(link.get('href'))
             a = link.get('href')
-            
+            x = a.replace(" ", "%20")
+            if ".torrent" in x:
+                print(x)
+                FLAG = 1
+            else:
+                print(link.get('href'))
         else:
             pass
+    if FLAG == True:
+        sys.exit()
 
 
 def resolution_link():
     print('\n')
-    url = input("Copy and paste the above links to see different resolutions avaliable: ")
+    url = input("Copy and paste the above links to see different avaliable resolutions: ")
     print('\n')
     res = requests.get(url)
     soup = BeautifulSoup(res.content, 'html.parser')
